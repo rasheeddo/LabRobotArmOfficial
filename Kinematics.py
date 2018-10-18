@@ -4,14 +4,14 @@ import time
 robotarm = RobotArm()
 
 robotarm.SetOperatingMode(3)
-
-######################### Set Velocity / Acceleration Profile  ##############################
+####################################### Setting Parameters #############################################
+# Set a profile for gripper / for the other motor would be set later
 
 # Gripper Profile
 
 robotarm.SetProfile7(120,20)
 
-######################### Set PID Gain Position Loop  ##############################
+# Set PID gain 
 P_Gain1 = 1500    #800 default
 I_Gain1 = 100     #0 default
 D_Gain1 = 4000   #4700 default
@@ -39,6 +39,7 @@ robotarm.SetPID6(P_Gain6,I_Gain6,D_Gain6)
 
 robotarm.SetPID7(1000,30,2000)
 
+# Set Feedforward gain
 FF1_Gain1 = 100
 FF2_Gain1 = 50
 robotarm.SetFFGain1(FF1_Gain1,FF2_Gain1)
@@ -59,12 +60,12 @@ FF2_Gain6 = 50
 robotarm.SetFFGain6(FF1_Gain6,FF2_Gain6)
 
 
-######################### Set Goal Current  ##############################
+# Set goal current of gripper
 robotarm.SetGoalCurrentGripper(60)
 
 time.sleep(1)
 
-################################################## Kinematics ###################################################
+################################################## Kinematics Run ###################################################
 robotarm.TorqueOff()
 
 run = True
@@ -118,5 +119,5 @@ try:
 		print("-------------------------------------------")
 
 except(KeyboardInterrupt, SystemExit):
-	run = False
+
 	print("End program...")

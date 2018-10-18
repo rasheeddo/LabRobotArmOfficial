@@ -34,6 +34,42 @@ class RobotArm:
 		self.a6 = 0
 		self.d6 = 200
 		self.alp6 = 0
+		########################## Robot's home position ################################
+		# Make an empty buffer for Home_Ang
+		self.Home_Ang1 = [None]*10
+		self.Home_Ang2 = [None]*10
+		self.Home_Ang3 = [None]*10
+		self.Home_Ang4 = [None]*10
+		self.Home_Ang5 = [None]*10
+		self.Home_Ang6 = [None]*10
+
+				## If you set the new home position, these Home_Ang must be changed
+		# Point: 0
+		self.Home_Ang1[0] = 283.252747
+		self.Home_Ang2[0] = 196.483516
+		self.Home_Ang3[0] = 143.648352
+		self.Home_Ang4[0] = 188.747253
+		self.Home_Ang5[0] = 111.120879
+		self.Home_Ang6[0] = 187.604396
+		 
+		# Point: 1
+		self.Home_Ang1[1] = 285.802198
+		self.Home_Ang2[1] = 185.318681
+		self.Home_Ang3[1] = 110.505495
+		self.Home_Ang4[1] = 187.340659
+		self.Home_Ang5[1] = 151.648352
+		self.Home_Ang6[1] = 188.395604
+
+				## Paste the new home position up there
+
+		# ELiminate [None] element in the list
+		self.Home_Ang1 = [x for x in self.Home_Ang1 if x is not None]
+		self.Home_Ang2 = [x for x in self.Home_Ang2 if x is not None]
+		self.Home_Ang3 = [x for x in self.Home_Ang3 if x is not None]
+		self.Home_Ang4 = [x for x in self.Home_Ang4 if x is not None]
+		self.Home_Ang5 = [x for x in self.Home_Ang5 if x is not None]
+		self.Home_Ang6 = [x for x in self.Home_Ang6 if x is not None]
+
 		####################################################### Set Servo Configuration #############################################################
 		# Control table address
 
@@ -306,21 +342,21 @@ class RobotArm:
 		wy = RPY_TCP[1,2]
 		wz = RPY_TCP[2,2]
 
-		px = qx - d6*wx
-		py = qy - d6*wy
-		pz = qz - d6*wz
+		px = qx - self.d6*wx
+		py = qy - self.d6*wy
+		pz = qz - self.d6*wz
 
 
 		################################ Find q1 #####################################
 		q1 = math.atan(py/px)
 
-		if ((q1 <= pi) and (q1 >= 0)):
+		if ((q1 <= self.pi) and (q1 >= 0)):
 			q1_1 = q1
-			q1_2 = q1 + pi
+			q1_2 = q1 + self.pi
 		else:
-			q1_1 = q1 + pi
+			q1_1 = q1 + self.pi
 			q1_2 = q1
-			q1 = q1 + pi
+			q1 = q1 + self.pi
 		'''
 		if q1_1 < 0.000001:
 		    q1_2 = 0
@@ -519,20 +555,20 @@ class RobotArm:
 		if x**2 + y**2 + z**2 <= R**2 and x**2 + y**2 + z**2 > r2**2:
 			if y < 0 and z > 0:
 				if x**2 + (y-Qy)**2 + (z-Qz)**2 > self.d6**2 and x**2 + (y-Sy)**2 + (z-Sz)**2 > (self.d6**2 + self.d4**2):
-					print("Work space is valid, in quadrant2")
+					#print("Work space is valid, in quadrant2")
 					return x,y,z
 				else:
 					print("ERROR: Out of work range in quadrant 2 or 3")
 					return [None]*3
 			elif y > 0 and z < 0:
 				if z > h:
-					print("Work space is valid, in quadrant4")
+					#print("Work space is valid, in quadrant4")
 					return x,y,z
 				else:
 					print("ERROR: z is lower than lowest range 'h'")
 					return [None]*3
 			elif y > 0 and z > 0:
-				print("Work space is valid, in quadrant1")
+				#print("Work space is valid, in quadrant1")
 				return x,y,z
 			else:
 				print("ERROR: y,z point is less than 0")
@@ -586,7 +622,7 @@ class RobotArm:
 				#print("Rc: %f" %Rc)
 
 				if x**2 + (z-Zc)**2 <= Rc**2:
-					print("Work space is valid")
+					#print("Work space is valid")
 					return x,y,z
 				else:
 					print("ERROR: Input is out of XZ plane")
@@ -656,7 +692,7 @@ class RobotArm:
 		if dxl_comm_result6 != COMM_SUCCESS:
 			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result6))
 		elif dxl_error6 != 0:
-			print("%s" % self.packetHandler.getRxPacketError(dxl_error6))
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error6))		
 
 	def ReadAngle(self):
 		dxl_present_position1, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_PRESENT_POSITION)
@@ -873,6 +909,12 @@ class RobotArm:
 		dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_TORQUE_ENABLE, self.TORQUE_DISABLE)
 		dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_TORQUE_ENABLE, self.TORQUE_DISABLE)
 
+	def TorqueGripperOn(self):
+		dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_TORQUE_ENABLE, self.TORQUE_ENABLE)
+
+	def TorqueGripperOff(self):
+		dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_TORQUE_ENABLE, self.TORQUE_DISABLE)
+
 	def GripOpen(self):
 		dxl7_goal_position = 1700
 		dxl_comm_result7, dxl_error7 = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_GOAL_POSITION, dxl7_goal_position)
@@ -924,10 +966,10 @@ class RobotArm:
 		dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_ACCELERATION_LIMIT, set_A_Limit)
 		dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_VELOCITY_LIMIT, set_V_Limit)
 
-		dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(portHandler, self.DXL2_ID, self.ADDR_PRO_PROFILE_ACCELERATION, int(set_A_PRFL))
-		dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(portHandler, self.DXL2_ID, self.ADDR_PRO_PROFILE_VELOCITY, int(set_V_PRFL))
+		dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_PROFILE_ACCELERATION, int(set_A_PRFL))
+		dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_PROFILE_VELOCITY, int(set_V_PRFL))
 
-		acceleration_limit, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.ortHandler, self.DXL2_ID, self.ADDR_PRO_ACCELERATION_LIMIT)
+		acceleration_limit, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_ACCELERATION_LIMIT)
 		velocity_limit, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_VELOCITY_LIMIT)
 
 		print("V PRFL 2: %d" %set_V_PRFL)
@@ -1430,13 +1472,16 @@ class RobotArm:
 
 	def StandByPos(self):
 
-		# Last Home Position #
-		Last_Ang1 = 282.637363
-		Last_Ang2 = 185.846154
-		Last_Ang3 = 106.109890
-		Last_Ang4 = 197.186813
-		Last_Ang5 = 152.879121
-		Last_Ang6 = 184.087912
+		HomeDataLength = len(self.Home_Ang1)
+
+		# Last Home Position
+		Last_Ang1 = self.Home_Ang1[HomeDataLength-1]
+		Last_Ang2 = self.Home_Ang2[HomeDataLength-1]
+		Last_Ang3 = self.Home_Ang3[HomeDataLength-1]
+		Last_Ang4 = self.Home_Ang4[HomeDataLength-1]
+		Last_Ang5 = self.Home_Ang5[HomeDataLength-1]
+		Last_Ang6 = self.Home_Ang6[HomeDataLength-1]
+
 		InitAng = self.ReadAngle()
 		Deg1 = InitAng[0]
 		Deg2 = InitAng[1]
@@ -1444,16 +1489,22 @@ class RobotArm:
 		Deg4 = InitAng[3]
 		Deg5 = InitAng[4]
 		Deg6 = InitAng[5]
-		if (abs(Deg1 - Last_Ang1) < 40) and (abs(Deg2 - Last_Ang2) < 40) and (abs(Deg3 - Last_Ang3) < 40) and (abs(Deg4 - Last_Ang4) < 40) and (abs(Deg5 - Last_Ang5) < 40) and (abs(Deg6 - Last_Ang6) < 40):
-			print("Robot is in sleep position")
+		if (abs(Deg1 - Last_Ang1) < 2) and (abs(Deg2 - Last_Ang2) < 2) and (abs(Deg3 - Last_Ang3) < 2) and (abs(Deg4 - Last_Ang4) < 2) and (abs(Deg5 - Last_Ang5) < 2) and (abs(Deg6 - Last_Ang6) < 2):
+			print("Robot is too close to sleep position")
 			print("Run [RobotArmAwake] first, then [StandByPos]")
+			print("DelPos1: %f" %abs(Deg1 - Last_Ang1))
+			print("DelPos2: %f" %abs(Deg2 - Last_Ang2))
+			print("DelPos3: %f" %abs(Deg3 - Last_Ang3))
+			print("DelPos4: %f" %abs(Deg4 - Last_Ang4))
+			print("DelPos5: %f" %abs(Deg5 - Last_Ang5))
+			print("DelPos6: %f" %abs(Deg6 - Last_Ang6))
 			time.sleep(1)
 			self.TorqueOff()
 		else:
 			print("Robot arm is going to standby position")
 
 			Vstd = 20
-			Astd = 5
+			Astd = 8
 
 			self.SetProfile1(Vstd,Astd)
 			self.SetProfile2(Vstd,Astd)
@@ -1469,30 +1520,13 @@ class RobotArm:
 			pos5 = 180
 			pos6 = 180
 
-			servo_com1 = self.map(pos1,0.0,360.0,0.0,4095.0)
-			servo_com2 = self.map(pos2,0.0,360.0,0.0,4095.0)
-			servo_com3 = self.map(pos3,0.0,360.0,0.0,4095.0)
-			servo_com4 = self.map(pos4,0.0,360.0,0.0,4095.0)
-			servo_com5 = self.map(pos5,0.0,360.0,0.0,4095.0)
-			servo_com6 = self.map(pos6,0.0,360.0,0.0,4095.0)
-
-			dxl1_goal_position = int(servo_com1)
-			dxl2_goal_position = int(servo_com2)
-			dxl3_goal_position = int(servo_com3)
-			dxl4_goal_position = int(servo_com4)
-			dxl5_goal_position = int(servo_com5)
-			dxl6_goal_position = int(servo_com6)
-
-			dxl_comm_result1, dxl_error1 = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_GOAL_POSITION, dxl1_goal_position)
-			dxl_comm_result2, dxl_error2 = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_GOAL_POSITION, dxl2_goal_position)
-			dxl_comm_result3, dxl_error3 = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_GOAL_POSITION, dxl3_goal_position)
-			dxl_comm_result4, dxl_error4 = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_GOAL_POSITION, dxl4_goal_position)
-			dxl_comm_result5, dxl_error5 = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_GOAL_POSITION, dxl5_goal_position)
-			dxl_comm_result6, dxl_error6 = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_GOAL_POSITION, dxl6_goal_position)
+			self.RunServo(pos1,pos2,pos3,pos4,pos5,pos6)
 
 			MovingFlag = True
+			# This delay would make sure that the moving detection loop will not run too fast than actual motion
+			time.sleep(0.1) 
 
-	        while MovingFlag:
+			while MovingFlag:
 				Move1 = self.IsMoving1()
 				Move2 = self.IsMoving2()
 				Move3 = self.IsMoving3()
@@ -1504,15 +1538,19 @@ class RobotArm:
 					MovingFlag = False
 
 
+
 	def RobotArmGoHome(self):
 
+		HomeDataLength = len(self.Home_Ang1)
+
 		# Last Home Position #
-		Last_Ang1 = 282.637363
-		Last_Ang2 = 185.846154
-		Last_Ang3 = 106.109890
-		Last_Ang4 = 197.186813
-		Last_Ang5 = 152.879121
-		Last_Ang6 = 184.087912
+		Last_Ang1 = self.Home_Ang1[HomeDataLength-1]
+		Last_Ang2 = self.Home_Ang2[HomeDataLength-1]
+		Last_Ang3 = self.Home_Ang3[HomeDataLength-1]
+		Last_Ang4 = self.Home_Ang4[HomeDataLength-1]
+		Last_Ang5 = self.Home_Ang5[HomeDataLength-1]
+		Last_Ang6 = self.Home_Ang6[HomeDataLength-1]
+
 		InitAng = self.ReadAngle()
 		Deg1 = InitAng[0]
 		Deg2 = InitAng[1]
@@ -1520,102 +1558,101 @@ class RobotArm:
 		Deg4 = InitAng[3]
 		Deg5 = InitAng[4]
 		Deg6 = InitAng[5]
-		if (abs(Deg1 - Last_Ang1) < 40) and (abs(Deg2 - Last_Ang2) < 40) and (abs(Deg3 - Last_Ang3) < 40) and (abs(Deg4 - Last_Ang4) < 40) and (abs(Deg5 - Last_Ang5) < 40) and (abs(Deg6 - Last_Ang6) < 40):
+		if (abs(Deg1 - Last_Ang1) < 40.0) and (abs(Deg2 - Last_Ang2) < 40) and (abs(Deg3 - Last_Ang3) < 40) and (abs(Deg4 - Last_Ang4) < 40) and (abs(Deg5 - Last_Ang5) < 40) and (abs(Deg6 - Last_Ang6) < 40):
 			print("Robot is already in sleep position")
 			time.sleep(1)
 			self.TorqueOff()
 		else:
 			print("Robot arm is going to sleep position")
+			self.GripOpen()
 
-			Vstd = 20
-			Astd = 5
+			K = 0
+			PreAng = self.ReadAngle()
+			PreAng1 = PreAng[0]
+			PreAng2 = PreAng[1]
+			PreAng3 = PreAng[2]
+			PreAng4 = PreAng[3]
+			PreAng5 = PreAng[4]
+			PreAng6 = PreAng[5]
+			for K in range(0,HomeDataLength):
 
-			self.SetProfile1(Vstd,Astd)
-			self.SetProfile2(Vstd,Astd)
-			self.SetProfile3(Vstd,Astd)
-			self.SetProfile4(Vstd,Astd)
-			self.SetProfile5(Vstd,Astd)
-			self.SetProfile6(Vstd,Astd)
-			#GripOpen()
-			#### Point 0 ####
-			Mem_Ang1 = 271.296703
-			Mem_Ang2 = 194.021978
-			Mem_Ang3 = 157.714286
-			Mem_Ang4 = 182.769231
-			Mem_Ang5 = 176.000000
-			Mem_Ang6 = 181.186813
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(1)
+				GoalPos1 = self.Home_Ang1[K]
+				GoalPos2 = self.Home_Ang2[K]
+				GoalPos3 = self.Home_Ang3[K]
+				GoalPos4 = self.Home_Ang4[K]
+				GoalPos5 = self.Home_Ang5[K]
+				GoalPos6 = self.Home_Ang6[K]
 
-			#### Point 1 ####
-			Mem_Ang1 = 278.417582
-			Mem_Ang2 = 203.956044
-			Mem_Ang3 = 157.978022
-			Mem_Ang4 = 181.714286
-			Mem_Ang5 = 123.164835
-			Mem_Ang6 = 184.263736
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(1)
+				DelPos1 = self.DeltaPos(PreAng1,GoalPos1)
+				DelPos2 = self.DeltaPos(PreAng2,GoalPos2)
+				DelPos3 = self.DeltaPos(PreAng3,GoalPos3)
+				DelPos4 = self.DeltaPos(PreAng4,GoalPos4)
+				DelPos5 = self.DeltaPos(PreAng5,GoalPos5)
+				DelPos6 = self.DeltaPos(PreAng6,GoalPos6)
 
-			#### Point 2 ####
-			Mem_Ang1 = 278.593407
-			Mem_Ang2 = 220.131868
-			Mem_Ang3 = 149.714286
-			Mem_Ang4 = 182.857143
-			Mem_Ang5 = 102.769231
-			Mem_Ang6 = 183.560440
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(1)
+				VSTD = 40
+				ASTD = 15
 
-			#### Point 3 ####
-			Mem_Ang1 = 283.956044
-			Mem_Ang2 = 207.472527
-			Mem_Ang3 = 116.307692
-			Mem_Ang4 = 188.307692
-			Mem_Ang5 = 132.747253
-			Mem_Ang6 = 187.516484
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(1)
+				TRAJ = self.TrajectoryGeneration3(VSTD,ASTD,DelPos1,DelPos2,DelPos3,DelPos4,DelPos5,DelPos6)
 
-			#### Point 4 ####
-			Mem_Ang1 = 282.285714
-			Mem_Ang2 = 188.483516
-			Mem_Ang3 = 107.164835
-			Mem_Ang4 = 194.021978
-			Mem_Ang5 = 148.043956
-			Mem_Ang6 = 184.087912
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(1)
+				V1 = TRAJ[0]
+				A1 = TRAJ[1]
+				V2 = TRAJ[2]
+				A2 = TRAJ[3]
+				V3 = TRAJ[4]
+				A3 = TRAJ[5]
+				V4 = TRAJ[6]
+				A4 = TRAJ[7]
+				V5 = TRAJ[8]
+				A5 = TRAJ[9]
+				V6 = TRAJ[10]
+				A6 = TRAJ[11]
 
-			#### Point 5 ####
-			Mem_Ang1 = 282.637363
-			Mem_Ang2 = 185.846154
-			Mem_Ang3 = 106.109890
-			Mem_Ang4 = 197.186813
-			Mem_Ang5 = 152.879121
-			Mem_Ang6 = 184.087912
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(1)
+				self.SetProfile1(V1,A1)
+				self.SetProfile2(V2,A2)
+				self.SetProfile3(V3,A3)
+				self.SetProfile4(V4,A4)
+				self.SetProfile5(V5,A5)
+				self.SetProfile6(V6,A6)
+
+
+				self.RunServo(self.Home_Ang1[K], self.Home_Ang2[K], self.Home_Ang3[K], self.Home_Ang4[K], self.Home_Ang5[K], self.Home_Ang6[K])
+
+				MovingFlag = True
+				# This delay would make sure that the moving detection loop will not run too fast than actual motion
+				time.sleep(0.1)
+
+				while MovingFlag:
+					Move1 = self.IsMoving1()
+					Move2 = self.IsMoving2()
+					Move3 = self.IsMoving3()
+					Move4 = self.IsMoving4()
+					Move5 = self.IsMoving5()
+					Move6 = self.IsMoving6()
+					
+					if Move1 == 0 and Move2 == 0 and Move3 == 0 and Move4 == 0 and Move5 == 0 and Move6 == 0:
+						MovingFlag = False
+					
+				PreAng1 = GoalPos1
+				PreAng2 = GoalPos2
+				PreAng3 = GoalPos3
+				PreAng4 = GoalPos4
+				PreAng5 = GoalPos5
+				PreAng6 = GoalPos6
+
 
 	def RobotArmAwake(self):
 
-		Vstd = 20
-		Astd = 5
-
-		self.SetProfile1(Vstd,Astd)
-		self.SetProfile2(Vstd,Astd)
-		self.SetProfile3(Vstd,Astd)
-		self.SetProfile4(Vstd,Astd)
-		self.SetProfile5(Vstd,Astd)
-		self.SetProfile6(Vstd,Astd)
+		HomeDataLength = len(self.Home_Ang1)
 
 		# Last Home Position #
-		Last_Ang1 = 282.637363
-		Last_Ang2 = 185.846154
-		Last_Ang3 = 106.109890
-		Last_Ang4 = 197.186813
-		Last_Ang5 = 152.879121
-		Last_Ang6 = 184.087912
+		Last_Ang1 = self.Home_Ang1[HomeDataLength-1]
+		Last_Ang2 = self.Home_Ang2[HomeDataLength-1]
+		Last_Ang3 = self.Home_Ang3[HomeDataLength-1]
+		Last_Ang4 = self.Home_Ang4[HomeDataLength-1]
+		Last_Ang5 = self.Home_Ang5[HomeDataLength-1]
+		Last_Ang6 = self.Home_Ang6[HomeDataLength-1]
+
 		InitAng = self.ReadAngle()
 		Deg1 = InitAng[0]
 		Deg2 = InitAng[1]
@@ -1625,93 +1662,95 @@ class RobotArm:
 		Deg6 = InitAng[5]
 		if (abs(Deg1 - Last_Ang1) < 40) and (abs(Deg2 - Last_Ang2) < 40) and (abs(Deg3 - Last_Ang3) < 40) and (abs(Deg4 - Last_Ang4) < 40) and (abs(Deg5 - Last_Ang5) < 40) and (abs(Deg6 - Last_Ang6) < 40):
 			print("Robot is in sleep position")
-			time.sleep(1)
 			AwakenOK = True
 			self.TorqueOn()
 			self.GripOpen()
-			#### Point 0 ####
-			Mem_Ang1 = 277.802198
-			Mem_Ang2 = 194.021978
-			Mem_Ang3 = 110.329670
-			Mem_Ang4 = 190.593407
-			Mem_Ang5 = 142.593407
-			Mem_Ang6 = 177.934066
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(0.5)
 
-			#### Point 1 ####
-			Mem_Ang1 = 273.670330
-			Mem_Ang2 = 199.384615
-			Mem_Ang3 = 125.802198
-			Mem_Ang4 = 186.901099
-			Mem_Ang5 = 119.912088
-			Mem_Ang6 = 177.934066
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(0.5)
+			K = HomeDataLength-1
+			PreAng = self.ReadAngle()
+			PreAng1 = PreAng[0]
+			PreAng2 = PreAng[1]
+			PreAng3 = PreAng[2]
+			PreAng4 = PreAng[3]
+			PreAng5 = PreAng[4]
+			PreAng6 = PreAng[5]
+			while K >= 0:
 
-			#### Point 2 ####
-			Mem_Ang1 = 271.560440
-			Mem_Ang2 = 201.670330
-			Mem_Ang3 = 152.351648
-			Mem_Ang4 = 184.967033
-			Mem_Ang5 = 96.351648
-			Mem_Ang6 = 175.296703
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(0.5)
+				print K
 
-			#### Point 3 ####
-			Mem_Ang1 = 270.505495
-			Mem_Ang2 = 213.890110
-			Mem_Ang3 = 169.934066
-			Mem_Ang4 = 184.439560
-			Mem_Ang5 = 86.681319
-			Mem_Ang6 = 174.153846
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(0.5)
+				GoalPos1 = self.Home_Ang1[K]
+				GoalPos2 = self.Home_Ang2[K]
+				GoalPos3 = self.Home_Ang3[K]
+				GoalPos4 = self.Home_Ang4[K]
+				GoalPos5 = self.Home_Ang5[K]
+				GoalPos6 = self.Home_Ang6[K]
 
-			#### Point 4 ####
-			Mem_Ang1 = 272.175824
-			Mem_Ang2 = 219.164835
-			Mem_Ang3 = 155.604396
-			Mem_Ang4 = 182.593407
-			Mem_Ang5 = 180.219780
-			Mem_Ang6 = 183.120879
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(0.5)
+				DelPos1 = self.DeltaPos(PreAng1,GoalPos1)
+				DelPos2 = self.DeltaPos(PreAng2,GoalPos2)
+				DelPos3 = self.DeltaPos(PreAng3,GoalPos3)
+				DelPos4 = self.DeltaPos(PreAng4,GoalPos4)
+				DelPos5 = self.DeltaPos(PreAng5,GoalPos5)
+				DelPos6 = self.DeltaPos(PreAng6,GoalPos6)
 
-			#### Point 5 ####
-			Mem_Ang1 = 224.351648
-			Mem_Ang2 = 175.560440
-			Mem_Ang3 = 224.967033
-			Mem_Ang4 = 173.450549
-			Mem_Ang5 = 233.318681
-			Mem_Ang6 = 181.098901
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(0.5)
+				VSTD = 40
+				ASTD = 10
 
-			#### Point 6 ####
-			Mem_Ang1 = 180.659341
-			Mem_Ang2 = 182.153846
-			Mem_Ang3 = 186.373626
-			Mem_Ang4 = 171.164835
-			Mem_Ang5 = 222.857143
-			Mem_Ang6 = 177.230769
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(0.5)
+				TRAJ = self.TrajectoryGeneration3(VSTD,ASTD,DelPos1,DelPos2,DelPos3,DelPos4,DelPos5,DelPos6)
 
-			#### Point 7 ####
-			Mem_Ang1 = 177.494505
-			Mem_Ang2 = 207.120879
-			Mem_Ang3 = 111.208791
-			Mem_Ang4 = 174.065934
-			Mem_Ang5 = 222.857143
-			Mem_Ang6 = 185.582418
-			self.RunServo(Mem_Ang1,Mem_Ang2,Mem_Ang3,Mem_Ang4,Mem_Ang5,Mem_Ang6)
-			time.sleep(2)
+				V1 = TRAJ[0]
+				A1 = TRAJ[1]
+				V2 = TRAJ[2]
+				A2 = TRAJ[3]
+				V3 = TRAJ[4]
+				A3 = TRAJ[5]
+				V4 = TRAJ[6]
+				A4 = TRAJ[7]
+				V5 = TRAJ[8]
+				A5 = TRAJ[9]
+				V6 = TRAJ[10]
+				A6 = TRAJ[11]
+
+				self.SetProfile1(V1,A1)
+				self.SetProfile2(V2,A2)
+				self.SetProfile3(V3,A3)
+				self.SetProfile4(V4,A4)
+				self.SetProfile5(V5,A5)
+				self.SetProfile6(V6,A6)
+
+				self.RunServo(self.Home_Ang1[K], self.Home_Ang2[K], self.Home_Ang3[K], self.Home_Ang4[K], self.Home_Ang5[K], self.Home_Ang6[K])
+
+				MovingFlag = True
+				# This delay would make sure that the moving detection loop will not run too fast than actual motion
+				time.sleep(0.1)
+				while MovingFlag:
+					Move1 = self.IsMoving1()
+					Move2 = self.IsMoving2()
+					Move3 = self.IsMoving3()
+					Move4 = self.IsMoving4()
+					Move5 = self.IsMoving5()
+					Move6 = self.IsMoving6()
+
+					if Move1 == 0 and Move2 == 0 and Move3 == 0 and Move4 == 0 and Move5 == 0 and Move6 == 0:
+						MovingFlag = False
+						
+				PreAng1 = GoalPos1
+				PreAng2 = GoalPos2
+				PreAng3 = GoalPos3
+				PreAng4 = GoalPos4
+				PreAng5 = GoalPos5
+				PreAng6 = GoalPos6
+
+				K = K - 1
 
 		else:
 			print("WARNING!: Robot is not in sleep position")
+			print("DelPos1: %f" %abs(Deg1 - Last_Ang1))
+			print("DelPos2: %f" %abs(Deg2 - Last_Ang2))
+			print("DelPos3: %f" %abs(Deg3 - Last_Ang3))
+			print("DelPos4: %f" %abs(Deg4 - Last_Ang4))
+			print("DelPos5: %f" %abs(Deg5 - Last_Ang5))
+			print("DelPos6: %f" %abs(Deg6 - Last_Ang6))
+
 			AwakenOK = False
-			self.TorqueOff()
 
 		return AwakenOK
