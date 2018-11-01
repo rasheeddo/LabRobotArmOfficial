@@ -76,7 +76,7 @@ class RobotArm:
 		self.Home_Ang5 = [x for x in self.Home_Ang5 if x is not None]
 		self.Home_Ang6 = [x for x in self.Home_Ang6 if x is not None]
 
-		####################################################### Set Servo Configuration #############################################################
+		#################### Set Servo Configuration #############################
 		# Control table address
 
 		self.ADDR_PRO_MODEL_NUMBER       		 = 0
@@ -160,10 +160,147 @@ class RobotArm:
 			print("Press any key to terminate...")
 			getch()
 			quit()
-		####################################################### Set Gripper Configuration #############################################################
+
+		###################### Set Operating Mode for the robot #################################
+		# It can be POSITION_CONTROL or CURRENT_BASED_POSITION_CONTROL
+		self.SetOperatingMode(self.POSITION_CONTROL)
+		# For Gripper, it is always CURRENT_BASED_POSITION_CONTROL, and already set, so doesn't need to be set again
+
+		###################### Set Gripper Configuration #################################
 		self.SetProfile7(200,60)
 		self.SetPID7(2000,30,2000)
 		self.SetGoalCurrentGripper(90)
+
+		######################## Set Torque configuration ################################
+		self.SetCurrentLimit1(800)
+		self.SetCurrentLimit2(1000) #Servo2 requires a lot of current, always set it as nearly maximum
+		self.SetCurrentLimit3(800)
+		self.SetCurrentLimit4(800)
+		self.SetCurrentLimit5(800)
+		self.SetCurrentLimit6(800)
+
+		# Goal current shouldn't be too low or too high, the robot must have enough torque to drive itself and take some load, but not too high to damage.
+		self.GoalCur1 = 150
+		self.GoalCur2 = 800
+		self.GoalCur3 = 250
+		self.GoalCur4 = 150
+		self.GoalCur5 = 250
+		self.GoalCur6 = 150
+
+		self.SetGoalCurrent1(self.GoalCur1)
+		self.SetGoalCurrent2(self.GoalCur2)
+		self.SetGoalCurrent3(self.GoalCur3)
+		self.SetGoalCurrent4(self.GoalCur4)
+		self.SetGoalCurrent5(self.GoalCur5)
+		self.SetGoalCurrent6(self.GoalCur6)
+
+		####################### Set PID & FF Gain configuration #############################
+		Present_mode = self.GetOperatingMode()
+		if Present_mode == 3:
+			P_Gain1 = 1500    #800 default
+			I_Gain1 = 100     #0 default
+			D_Gain1 = 4000   #4700 default
+
+			P_Gain2 = 1500    #800 default
+			I_Gain2 = 100     #0 default
+			D_Gain2 = 4000   #4700 default
+
+			P_Gain3 = 1500    #800 default
+			I_Gain3 = 100     #0 default
+			D_Gain3 = 4000   #4700 default
+
+			P_Gain4 = 1500    #800 default
+			I_Gain4 = 100     #0 default
+			D_Gain4 = 4000   #4700 default
+
+			P_Gain5 = 1500    #800 default
+			I_Gain5 = 100     #0 default
+			D_Gain5 = 4000   #4700 default
+
+			P_Gain6 = 1500    #800 default
+			I_Gain6 = 100     #0 default
+			D_Gain6 = 4000   #4700 default
+
+			# Set Feedforward gain
+			FF1_Gain1 = 100
+			FF2_Gain1 = 50
+
+			FF1_Gain2 = 100
+			FF2_Gain2 = 50
+
+			FF1_Gain3 = 100
+			FF2_Gain3 = 50
+
+			FF1_Gain4 = 100
+			FF2_Gain4 = 50
+
+			FF1_Gain5 = 100
+			FF2_Gain5 = 50
+
+			FF1_Gain6 = 100
+			FF2_Gain6 = 50
+
+		elif Present_mode == 5:
+			# Set PID gain 
+			P_Gain1 = 800    #800 default
+			I_Gain1 = 100     #0 default
+			D_Gain1 = 9000   #4700 default
+
+			P_Gain2 = 800    #800 default
+			I_Gain2 = 100     #0 default
+			D_Gain2 = 9000   #4700 default
+
+			P_Gain3 = 800    #800 default
+			I_Gain3 = 100     #0 default
+			D_Gain3 = 9000   #4700 default
+
+			P_Gain4 = 800    #800 default
+			I_Gain4 = 50     #0 default
+			D_Gain4 = 7000   #4700 default
+
+			P_Gain5 = 800    #800 default
+			I_Gain5 = 50     #0 default
+			D_Gain5 = 7000   #4700 default
+
+			P_Gain6 = 800    #800 default
+			I_Gain6 = 50     #0 default
+			D_Gain6 = 7000   #4700 default
+
+			# Set Feedforward gain
+			FF1_Gain1 = 300
+			FF2_Gain1 = 50
+
+			FF1_Gain2 = 300
+			FF2_Gain2 = 50
+
+			FF1_Gain3 = 300
+			FF2_Gain3 = 50
+
+			FF1_Gain4 = 300
+			FF2_Gain4 = 50
+
+			FF1_Gain5 = 300
+			FF2_Gain5 = 50
+
+			FF1_Gain6 = 300
+			FF2_Gain6 = 50
+
+		# Set PID gain 
+		self.SetPID1(P_Gain1,I_Gain1,D_Gain1)
+		self.SetPID2(P_Gain2,I_Gain2,D_Gain2)
+		self.SetPID3(P_Gain3,I_Gain3,D_Gain3)
+		self.SetPID4(P_Gain4,I_Gain4,D_Gain4)
+		self.SetPID5(P_Gain5,I_Gain5,D_Gain5)
+		self.SetPID6(P_Gain6,I_Gain6,D_Gain6)
+
+		# Set Feedforward gain
+		self.SetFFGain1(FF1_Gain1,FF2_Gain1)
+		self.SetFFGain2(FF1_Gain2,FF2_Gain2)
+		self.SetFFGain3(FF1_Gain3,FF2_Gain3)
+		self.SetFFGain4(FF1_Gain4,FF2_Gain4)
+		self.SetFFGain5(FF1_Gain5,FF2_Gain5)
+		self.SetFFGain6(FF1_Gain6,FF2_Gain6)
+
 
 
 	def getButton(self):
@@ -249,6 +386,344 @@ class RobotArm:
 		else:
 			print("In other Mode that didn't set!")
 
+	def GetOperatingMode(self):
+		present_mode, dxl_comm_result, dxl_error = self.packetHandler.read1ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_OPERATING_MODE)
+
+		return present_mode
+
+
+	def SetCurrentLimit1(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 6.8779]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 5.5064]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 1193], [Range(ampere) : 0 ~ 3.2092]
+
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+
+		# Check what is the model of this servo
+		ServoModel = self.ReadModelNumber(1)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+
+		# user input is in ComValue unit
+
+		# Write ComValue
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_CURRENT_LIMIT,ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		# Read and confirm input value
+		dxl_current_limit, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_CURRENT_LIMIT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		CurLimit = dxl_current_limit*(SetUnit/1000.0)
+		print("Current Limit 1 [ComValue] : %f" %dxl_current_limit)
+		print("Current Limit 1 [Ampere] : %f" %CurLimit)
+
+	def SetCurrentLimit2(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 6.8779]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 5.5064]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 1193], [Range(ampere) : 0 ~ 3.2092]
+
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+
+		# Check what is the model of this servo
+		ServoModel = self.ReadModelNumber(2)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+
+		# user input is in ComValue unit
+
+		# Write ComValue
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_CURRENT_LIMIT,ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		# Read and confirm input value
+		dxl_current_limit, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_CURRENT_LIMIT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		CurLimit = dxl_current_limit*(SetUnit/1000.0)
+		print("Current Limit 2 [ComValue] : %f" %dxl_current_limit)
+		print("Current Limit 2 [Ampere] : %f" %CurLimit)
+
+	def SetCurrentLimit3(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 6.8779]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 5.5064]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 1193], [Range(ampere) : 0 ~ 3.2092]
+
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+
+		# Check what is the model of this servo
+		ServoModel = self.ReadModelNumber(3)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+
+		# user input is in ComValue unit
+
+		# Write ComValue
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_CURRENT_LIMIT,ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		# Read and confirm input value
+		dxl_current_limit, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_CURRENT_LIMIT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		CurLimit = dxl_current_limit*(SetUnit/1000.0)
+		print("Current Limit 3 [ComValue] : %f" %dxl_current_limit)
+		print("Current Limit 3 [Ampere] : %f" %CurLimit)
+
+	def SetCurrentLimit4(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 6.8779]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 5.5064]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 1193], [Range(ampere) : 0 ~ 3.2092]
+
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+
+		# Check what is the model of this servo
+		ServoModel = self.ReadModelNumber(4)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+
+		# user input is in ComValue unit
+
+		# Write ComValue
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_CURRENT_LIMIT,ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		# Read and confirm input value
+		dxl_current_limit, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_CURRENT_LIMIT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		CurLimit = dxl_current_limit*(SetUnit/1000.0)
+		print("Current Limit 4 [ComValue] : %f" %dxl_current_limit)
+		print("Current Limit 4 [Ampere] : %f" %CurLimit)
+
+	def SetCurrentLimit5(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 6.8779]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 5.5064]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 1193], [Range(ampere) : 0 ~ 3.2092]
+
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+
+		# Check what is the model of this servo
+		ServoModel = self.ReadModelNumber(5)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+
+		# user input is in ComValue unit
+
+		# Write ComValue
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_CURRENT_LIMIT,ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		# Read and confirm input value
+		dxl_current_limit, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_CURRENT_LIMIT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		CurLimit = dxl_current_limit*(SetUnit/1000.0)
+		print("Current Limit 5 [ComValue] : %f" %dxl_current_limit)
+		print("Current Limit 5 [Ampere] : %f" %CurLimit)
+
+	def SetCurrentLimit6(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 6.8779]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 2047], [Range(ampere) : 0 ~ 5.5064]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : 0 ~ 1193], [Range(ampere) : 0 ~ 3.2092]
+
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+
+		# Check what is the model of this servo
+		ServoModel = self.ReadModelNumber(6)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+
+		# user input is in ComValue unit
+
+		# Write ComValue
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_CURRENT_LIMIT,ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		# Read and confirm input value
+		dxl_current_limit, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_CURRENT_LIMIT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		CurLimit = dxl_current_limit*(SetUnit/1000.0)
+		print("Current Limit 6 [ComValue] : %f" %dxl_current_limit)
+		print("Current Limit 6 [Ampere] : %f" %CurLimit)
+
+
+
+	def SetGoalCurrent1(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+
+		# user input is in ComValue unit
+
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_GOAL_CURRENT, ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+	def SetGoalCurrent2(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+
+		# user input is in ComValue unit
+
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_GOAL_CURRENT, ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+	def SetGoalCurrent3(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+
+		# user input is in ComValue unit
+
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_GOAL_CURRENT, ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+	def SetGoalCurrent4(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+
+		# user input is in ComValue unit
+
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_GOAL_CURRENT, ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+	def SetGoalCurrent5(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+
+		# user input is in ComValue unit
+
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_GOAL_CURRENT, ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+	def SetGoalCurrent6(self,ComValue):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+
+		# user input is in ComValue unit
+
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_GOAL_CURRENT, ComValue)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
 	def SetGoalCurrentGripper(self,SetCur):
 
 		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_GOAL_CURRENT, SetCur)
@@ -258,6 +733,314 @@ class RobotArm:
 			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 		else:
 			print("Goal Current is set")
+
+
+	def ReadAllCurrent(self):
+		dxl_present_current1, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		dxl_present_current2, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		dxl_present_current3, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		dxl_present_current4, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		dxl_present_current5, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		dxl_present_current6, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		# 1
+		if dxl_present_current1 > 32767:
+			com_signed_value1 = dxl_present_current1 - 65536
+		else:
+			com_signed_value1 = dxl_present_current1
+		# 2
+		if dxl_present_current2 > 32767:
+			com_signed_value2 = dxl_present_current2 - 65536
+		else:
+			com_signed_value2 = dxl_present_current2
+		# 3
+		if dxl_present_current3 > 32767:
+			com_signed_value3 = dxl_present_current3 - 65536
+		else:
+			com_signed_value3 = dxl_present_current3
+		# 4
+		if dxl_present_current4 > 32767:
+			com_signed_value4 = dxl_present_current4 - 65536
+		else:
+			com_signed_value4 = dxl_present_current4
+		# 5
+		if dxl_present_current5 > 32767:
+			com_signed_value5 = dxl_present_current5 - 65536
+		else:
+			com_signed_value5 = dxl_present_current5
+		# 6
+		if dxl_present_current6 > 32767:
+			com_signed_value6 = dxl_present_current6 - 65536
+		else:
+			com_signed_value6 = dxl_present_current6
+
+		#PresentCur = com_signed_value*(SetUnit/1000.0)
+		print("Present current1 [ComValue_signed]: %f" %com_signed_value1)
+		print("Present current2 [ComValue_signed]: %f" %com_signed_value2)
+		print("Present current3 [ComValue_signed]: %f" %com_signed_value3)
+		print("Present current4 [ComValue_signed]: %f" %com_signed_value4)
+		print("Present current5 [ComValue_signed]: %f" %com_signed_value5)
+		print("Present current6 [ComValue_signed]: %f" %com_signed_value6)
+
+		return com_signed_value1, com_signed_value2, com_signed_value3, com_signed_value4, com_signed_value5, com_signed_value6
+
+	def ReadCurrent1(self):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		'''
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+		
+		# Check what is the model of this servo
+		ServoModel = ReadModelNumber(1)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+		'''
+		dxl_present_current, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		if dxl_present_current > 32767:
+			com_signed_value = dxl_present_current - 65536
+		else:
+			com_signed_value = dxl_present_current
+
+		#PresentCur = com_signed_value*(SetUnit/1000.0)
+		print("Present current1 [ComValue_signed]: %f" %com_signed_value)
+		#print("Present current1 [Ampere]: %f" %PresentCur)
+
+		return com_signed_value
+
+	def ReadCurrent2(self):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		'''
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+		
+		# Check what is the model of this servo
+		ServoModel = ReadModelNumber(2)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+		'''
+		dxl_present_current, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		if dxl_present_current > 32767:
+			com_signed_value = dxl_present_current - 65536
+		else:
+			com_signed_value = dxl_present_current
+
+		#PresentCur = com_signed_value*(SetUnit/1000.0)
+		print("Present current2 [ComValue_signed]: %f" %com_signed_value)
+		#print("Present current [Ampere]: %f" %PresentCur)
+
+		return com_signed_value
+
+	def ReadCurrent3(self):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		'''
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+		
+		# Check what is the model of this servo
+		ServoModel = ReadModelNumber(1)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+		'''
+		dxl_present_current, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		if dxl_present_current > 32767:
+			com_signed_value = dxl_present_current - 65536
+		else:
+			com_signed_value = dxl_present_current
+
+		#PresentCur = com_signed_value*(SetUnit/1000.0)
+		print("Present current3 [ComValue_signed]: %f" %com_signed_value)
+		#print("Present current [Ampere]: %f" %PresentCur)
+
+		return com_signed_value
+
+	def ReadCurrent4(self):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		'''
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+		
+		# Check what is the model of this servo
+		ServoModel = ReadModelNumber(1)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+		'''
+		dxl_present_current, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		if dxl_present_current > 32767:
+			com_signed_value = dxl_present_current - 65536
+		else:
+			com_signed_value = dxl_present_current
+
+		#PresentCur = com_signed_value*(SetUnit/1000.0)
+		print("Present current4 [ComValue_signed]: %f" %com_signed_value)
+		#print("Present current [Ampere]: %f" %PresentCur)
+
+		return com_signed_value
+
+	def ReadCurrent5(self):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		'''
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+		
+		# Check what is the model of this servo
+		ServoModel = ReadModelNumber(1)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+		'''
+		dxl_present_current, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		if dxl_present_current > 32767:
+			com_signed_value = dxl_present_current - 65536
+		else:
+			com_signed_value = dxl_present_current
+
+		#PresentCur = com_signed_value*(SetUnit/1000.0)
+		print("Present current5 [ComValue_signed]: %f" %com_signed_value)
+		#print("Present current [Ampere]: %f" %PresentCur)
+
+		return com_signed_value
+
+	def ReadCurrent6(self):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		'''
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+		
+		# Check what is the model of this servo
+		ServoModel = ReadModelNumber(1)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+		'''
+		dxl_present_current, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		if dxl_present_current > 32767:
+			com_signed_value = dxl_present_current - 65536
+		else:
+			com_signed_value = dxl_present_current
+
+		#PresentCur = com_signed_value*(SetUnit/1000.0)
+		print("Present current6 [ComValue_signed]: %f" %com_signed_value)
+		#print("Present current [Ampere]: %f" %PresentCur)
+
+		return com_signed_value
+
+	def ReadCurrentGripper(self):
+
+		# Each model has difference range and unit
+		# MX106 -> [Unit : 3.36mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM540 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		# XM430 -> [Unit : 2.69mA], [Range(ComValue) : -SetCurLimit ~ SetCurLimit]
+		'''
+		UnitMX106 = 3.36 
+		UnitXM540 = 2.69
+		UnitXM430 = 2.69
+		
+		# Check what is the model of this servo
+		ServoModel = ReadModelNumber(1)
+		if ServoModel == 321:
+			SetUnit = UnitMX106
+		elif ServoModel == 1020:
+			SetUnit = UnitXM430
+		elif ServoModel == 1120:
+			SetUnit = UnitXM540
+		'''
+		dxl_present_current, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_PRESENT_CURRENT)
+		if dxl_comm_result != COMM_SUCCESS:
+			print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+		elif dxl_error != 0:
+			print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+		if dxl_present_current > 32767:
+			com_signed_value = dxl_present_current - 65536
+		else:
+			com_signed_value = dxl_present_current
+
+		#PresentCur = com_signed_value*(SetUnit/1000.0)
+		print("Present current7 [ComValue_signed]: %f" %com_signed_value)
+		#print("Present current [Ampere]: %f" %PresentCur)
+
+		return com_signed_value
 
 	def RobotArmFWD(self,deg1,deg2,deg3,deg4,deg5,deg6):
 
@@ -332,7 +1115,6 @@ class RobotArm:
 		z6_rot = z6_rot*self.rad2deg
 
 		return qx, qy, qz, x6_rot, y6_rot, z6_rot
-
 
 	def RobotArmINV(self,qx,qy,qz,x6_rot,y6_rot,z6_rot):
 
@@ -590,6 +1372,8 @@ class RobotArm:
 
 		return ServoANG
 
+
+
 	def WorkspaceLimitation(self,x,y,z):
 
 		R = 560.0
@@ -681,6 +1465,7 @@ class RobotArm:
 		else:
 			print("ERROR: Input is minus number")
 			return [None]*3
+
 
 
 	def RunServo(self,inputDeg1,inputDeg2,inputDeg3,inputDeg4,inputDeg5,inputDeg6):
@@ -836,6 +1621,8 @@ class RobotArm:
 		elif dxl_error7 != 0:
 			print("%s" % self.packetHandler.getRxPacketError(dxl_error7))
 
+
+
 	def IsMoving1(self):
 		Moving1, dxl_comm_result, dxl_error = self.packetHandler.read1ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_MOVING)
 		return Moving1
@@ -956,6 +1743,8 @@ class RobotArm:
 
 		return MovingStat6
 
+
+
 	def TorqueOn(self):
 		dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_TORQUE_ENABLE, self.TORQUE_ENABLE)
 		dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_TORQUE_ENABLE, self.TORQUE_ENABLE)
@@ -987,6 +1776,8 @@ class RobotArm:
 	def GripClose(self):
 		dxl7_goal_position = 1600
 		dxl_comm_result7, dxl_error7 = self.packetHandler.write4ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_GOAL_POSITION, dxl7_goal_position)
+
+
 
 	def DeltaPos(self,pre_pos,goal_pos):
 		if pre_pos > 360 or goal_pos > 360:
@@ -1145,170 +1936,6 @@ class RobotArm:
 		print("V PRFL 7: %d" %set_V_PRFL)
 		print("A PRFL 7: %d" %set_A_PRFL)
 		print("--------------------------------")     
-
-	def SetPID1(self,set_P_Gain,set_I_Gain,set_D_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
-
-		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_D_GAIN)
-		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_I_GAIN)
-		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_P_GAIN)
-
-		print("Position P Gain 1: %d" %position_P_gain)
-		print("Position I Gain 1: %d" %position_I_gain)
-		print("Position D Gain 1: %d" %position_D_gain)
-		print("------------------------------")
-
-	def SetPID2(self,set_P_Gain,set_I_Gain,set_D_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
-
-		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_D_GAIN)
-		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_I_GAIN)
-		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_P_GAIN)
-
-		print("Position P Gain 2: %d" %position_P_gain)
-		print("Position I Gain 2: %d" %position_I_gain)
-		print("Position D Gain 2: %d" %position_D_gain)
-		print("------------------------------")
-
-	def SetPID3(self,set_P_Gain,set_I_Gain,set_D_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
-
-		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_D_GAIN)
-		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_I_GAIN)
-		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_P_GAIN)
-
-		print("Position P Gain 3: %d" %position_P_gain)
-		print("Position I Gain 3: %d" %position_I_gain)
-		print("Position D Gain 3: %d" %position_D_gain)
-		print("------------------------------")
-
-	def SetPID4(self,set_P_Gain,set_I_Gain,set_D_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)    
-
-		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_D_GAIN)
-		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_I_GAIN)
-		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_P_GAIN)
-
-		print("Position P Gain 4: %d" %position_P_gain)
-		print("Position I Gain 4: %d" %position_I_gain)
-		print("Position D Gain 4: %d" %position_D_gain)
-		print("------------------------------")
-
-	def SetPID5(self,set_P_Gain,set_I_Gain,set_D_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
-
-		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_D_GAIN)
-		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_I_GAIN)
-		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_P_GAIN)
-
-		print("Position P Gain 5: %d" %position_P_gain)
-		print("Position I Gain 5: %d" %position_I_gain)
-		print("Position D Gain 5: %d" %position_D_gain)
-		print("------------------------------")
-
-	def SetPID6(self,set_P_Gain,set_I_Gain,set_D_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
-
-		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_D_GAIN)
-		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_I_GAIN)
-		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_P_GAIN)
-
-		print("Position P Gain 6: %d" %position_P_gain)
-		print("Position I Gain 6: %d" %position_I_gain)
-		print("Position D Gain 6: %d" %position_D_gain)
-		print("------------------------------")
-
-	def SetPID7(self,set_P_Gain,set_I_Gain,set_D_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
-
-		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_D_GAIN)
-		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_I_GAIN)
-		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_P_GAIN)
-
-		print("Position P Gain 7: %d" %position_P_gain)
-		print("Position I Gain 7: %d" %position_I_gain)
-		print("Position D Gain 7: %d" %position_D_gain)
-		print("------------------------------")    
-
-	def SetFFGain1(self,set_FF1_Gain,set_FF2_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
-
-		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
-		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
-
-		print("Feedforward 1st Gain 1: %d" %FF1_gain)
-		print("Feedforward 2nd Gain 1: %d" %FF2_gain)
-		print("------------------------------") 
-
-	def SetFFGain2(self,set_FF1_Gain,set_FF2_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
-
-		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
-		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
-
-		print("Feedforward 1st Gain 2: %d" %FF1_gain)
-		print("Feedforward 2nd Gain 2: %d" %FF2_gain)
-		print("------------------------------")
-
-	def SetFFGain3(self,set_FF1_Gain,set_FF2_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
-
-		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
-		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
-
-		print("Feedforward 1st Gain 3: %d" %FF1_gain)
-		print("Feedforward 2nd Gain 3: %d" %FF2_gain)
-		print("------------------------------")
-
-	def SetFFGain4(self,set_FF1_Gain,set_FF2_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
-
-		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
-		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
-
-		print("Feedforward 1st Gain 4: %d" %FF1_gain)
-		print("Feedforward 2nd Gain 4: %d" %FF2_gain)
-		print("------------------------------")   
-
-	def SetFFGain5(self,set_FF1_Gain,set_FF2_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
-
-		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
-		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
-
-		print("Feedforward 1st Gain 5: %d" %FF1_gain)
-		print("Feedforward 2nd Gain 5: %d" %FF2_gain)
-		print("------------------------------")
-
-	def SetFFGain6(self,set_FF1_Gain,set_FF2_Gain):
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
-		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
-
-		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
-		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
-
-		print("Feedforward 1st Gain 6: %d" %FF1_gain)
-		print("Feedforward 2nd Gain 6: %d" %FF2_gain)
-		print("------------------------------")
 
 	def TrajectoryGeneration3(self,Vstd,Astd,DelPos1,DelPos2,DelPos3,DelPos4,DelPos5,DelPos6):
 		DelPos = [DelPos1, DelPos2, DelPos3, DelPos4, DelPos5, DelPos6]
@@ -1534,6 +2161,174 @@ class RobotArm:
 			A5 = 64*V5 / den_std
 
 		return V1, A1, V2, A2, V3, A3, V4, A4, V5, A5, V6, A6
+
+
+
+	def SetPID1(self,set_P_Gain,set_I_Gain,set_D_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
+
+		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_D_GAIN)
+		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_I_GAIN)
+		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_POSITION_P_GAIN)
+
+		print("Position P Gain 1: %d" %position_P_gain)
+		print("Position I Gain 1: %d" %position_I_gain)
+		print("Position D Gain 1: %d" %position_D_gain)
+		print("------------------------------")
+
+	def SetPID2(self,set_P_Gain,set_I_Gain,set_D_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
+
+		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_D_GAIN)
+		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_I_GAIN)
+		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_POSITION_P_GAIN)
+
+		print("Position P Gain 2: %d" %position_P_gain)
+		print("Position I Gain 2: %d" %position_I_gain)
+		print("Position D Gain 2: %d" %position_D_gain)
+		print("------------------------------")
+
+	def SetPID3(self,set_P_Gain,set_I_Gain,set_D_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
+
+		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_D_GAIN)
+		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_I_GAIN)
+		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_POSITION_P_GAIN)
+
+		print("Position P Gain 3: %d" %position_P_gain)
+		print("Position I Gain 3: %d" %position_I_gain)
+		print("Position D Gain 3: %d" %position_D_gain)
+		print("------------------------------")
+
+	def SetPID4(self,set_P_Gain,set_I_Gain,set_D_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)    
+
+		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_D_GAIN)
+		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_I_GAIN)
+		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_POSITION_P_GAIN)
+
+		print("Position P Gain 4: %d" %position_P_gain)
+		print("Position I Gain 4: %d" %position_I_gain)
+		print("Position D Gain 4: %d" %position_D_gain)
+		print("------------------------------")
+
+	def SetPID5(self,set_P_Gain,set_I_Gain,set_D_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
+
+		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_D_GAIN)
+		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_I_GAIN)
+		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_POSITION_P_GAIN)
+
+		print("Position P Gain 5: %d" %position_P_gain)
+		print("Position I Gain 5: %d" %position_I_gain)
+		print("Position D Gain 5: %d" %position_D_gain)
+		print("------------------------------")
+
+	def SetPID6(self,set_P_Gain,set_I_Gain,set_D_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
+
+		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_D_GAIN)
+		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_I_GAIN)
+		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_POSITION_P_GAIN)
+
+		print("Position P Gain 6: %d" %position_P_gain)
+		print("Position I Gain 6: %d" %position_I_gain)
+		print("Position D Gain 6: %d" %position_D_gain)
+		print("------------------------------")
+
+	def SetPID7(self,set_P_Gain,set_I_Gain,set_D_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_P_GAIN, set_P_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_I_GAIN, set_I_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_D_GAIN, set_D_Gain)
+
+		position_D_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_D_GAIN)
+		position_I_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_I_GAIN)
+		position_P_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL7_ID, self.ADDR_PRO_POSITION_P_GAIN)
+
+		print("Position P Gain 7: %d" %position_P_gain)
+		print("Position I Gain 7: %d" %position_I_gain)
+		print("Position D Gain 7: %d" %position_D_gain)
+		print("------------------------------")    
+
+	def SetFFGain1(self,set_FF1_Gain,set_FF2_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
+
+		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
+		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL1_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
+
+		print("Feedforward 1st Gain 1: %d" %FF1_gain)
+		print("Feedforward 2nd Gain 1: %d" %FF2_gain)
+		print("------------------------------") 
+
+	def SetFFGain2(self,set_FF1_Gain,set_FF2_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
+
+		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
+		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL2_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
+
+		print("Feedforward 1st Gain 2: %d" %FF1_gain)
+		print("Feedforward 2nd Gain 2: %d" %FF2_gain)
+		print("------------------------------")
+
+	def SetFFGain3(self,set_FF1_Gain,set_FF2_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
+
+		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
+		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL3_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
+
+		print("Feedforward 1st Gain 3: %d" %FF1_gain)
+		print("Feedforward 2nd Gain 3: %d" %FF2_gain)
+		print("------------------------------")
+
+	def SetFFGain4(self,set_FF1_Gain,set_FF2_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
+
+		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
+		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL4_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
+
+		print("Feedforward 1st Gain 4: %d" %FF1_gain)
+		print("Feedforward 2nd Gain 4: %d" %FF2_gain)
+		print("------------------------------")   
+
+	def SetFFGain5(self,set_FF1_Gain,set_FF2_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
+
+		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
+		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL5_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
+
+		print("Feedforward 1st Gain 5: %d" %FF1_gain)
+		print("Feedforward 2nd Gain 5: %d" %FF2_gain)
+		print("------------------------------")
+
+	def SetFFGain6(self,set_FF1_Gain,set_FF2_Gain):
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN, set_FF1_Gain)
+		dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN, set_FF2_Gain)
+
+		FF1_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_FEEDFORWARD_1st_GAIN)
+		FF2_gain, dxl_comm_result, dxl_error = self.packetHandler.read2ByteTxRx(self.portHandler, self.DXL6_ID, self.ADDR_PRO_FEEDFORWARD_2nd_GAIN)
+
+		print("Feedforward 1st Gain 6: %d" %FF1_gain)
+		print("Feedforward 2nd Gain 6: %d" %FF2_gain)
+		print("------------------------------")
+
+
 
 	def StandByPos(self):
 
@@ -3040,3 +3835,263 @@ class RobotArm:
 			if GripClose_Btn == True:
 				self.GripClose()
 				time.sleep(0.5)
+
+	def DynamicExample(self):
+
+		WakeUpStatus = self.RobotArmAwake()		# If robot is in sleep position, this command would wake the robot up
+		time.sleep(0.5)
+
+		if WakeUpStatus:
+			self.StandByPos()						# Move the robot to the stand by position
+			Run = True
+		else:
+			Run = False
+
+		Mem_X = [None]*20
+		Mem_Y = [None]*20
+		Mem_Z = [None]*20
+
+		# We are going to input X,Y,Z,X-rot,Y-rot,Z-rot to inverse kinematics
+		# Keep all variables constant and change just X
+		# The robot would keep moving in X direction (not perfect linear translation but looks natural move)
+		Yconst = 250.0
+		Zconst = 150.0
+		X6_ROT = 0.0
+		Y6_ROT = 0.0
+		Z6_ROT = 0.0
+
+		try:
+			while Run:
+
+				# Move X in 6 points, the value must not over than Workspace limitation
+				Mem_X[0] = 250.0
+				Mem_Y[0] = Yconst
+				Mem_Z[0] = Zconst
+
+				Mem_X[1] = 0.0
+				Mem_Y[1] = Yconst
+				Mem_Z[1] = Zconst
+
+				Mem_X[2] = -250.0
+				Mem_Y[2] = Yconst
+				Mem_Z[2] = Zconst
+
+				Mem_X[3] = 0.0
+				Mem_Y[3] = Yconst
+				Mem_Z[3] = Zconst
+
+				Mem_X[4] = 250.0
+				Mem_Y[4] = Yconst
+				Mem_Z[4] = Zconst
+
+				Mem_X[5] = 100.0
+				Mem_Y[5] = Yconst
+				Mem_Z[5] = Zconst
+
+				# Read starting angle 
+				PreAng = self.ReadAngle()
+				PreAng1 = PreAng[0]
+				PreAng2 = PreAng[1]
+				PreAng3 = PreAng[2]
+				PreAng4 = PreAng[3]
+				PreAng5 = PreAng[4]
+				PreAng6 = PreAng[5]
+
+				for K in range(0,6):
+					startTime = time.time()
+					# Check the input from user whether valid or not by using WorkspaceLimitation function
+					# If the input X,Y,Z are valid, then it will return same value
+					# If not, it will return None type
+					XYZ = self.WorkspaceLimitation(Mem_X[K],Mem_Y[K],Mem_Z[K])
+					Com_X = XYZ[0]
+					Com_Y = XYZ[1]
+					Com_Z = XYZ[2]
+					if Com_X == None or Com_Y == None or Com_Z == None:
+						break
+					else:
+						Mem_ANG = self.RobotArmINV(Com_X,Com_Y,Com_Z,X6_ROT,Y6_ROT,Z6_ROT)
+
+						GoalPos1 = Mem_ANG[0]
+						GoalPos2 = Mem_ANG[1]
+						GoalPos3 = Mem_ANG[2]
+						GoalPos4 = Mem_ANG[3]
+						GoalPos5 = Mem_ANG[4]
+						GoalPos6 = Mem_ANG[5]
+						# Calculate difference between goal position and current position
+						DelPos1 = self.DeltaPos(PreAng1,GoalPos1)
+						DelPos2 = self.DeltaPos(PreAng2,GoalPos2)
+						DelPos3 = self.DeltaPos(PreAng3,GoalPos3)
+						DelPos4 = self.DeltaPos(PreAng4,GoalPos4)
+						DelPos5 = self.DeltaPos(PreAng5,GoalPos5)
+						DelPos6 = self.DeltaPos(PreAng6,GoalPos6)
+						# specify the velocity and acceralation standard
+						VSTD = 100
+						ASTD = 12
+						# Calculate how much velocity and accerelation in each joint to make it stop at the same time
+						# TrajectoryGeneration3 is a function to generate joint velocity profile to make robot looks natural movement
+						TRAJ = self.TrajectoryGeneration3(VSTD,ASTD,DelPos1,DelPos2,DelPos3,DelPos4,DelPos5,DelPos6)
+
+						V1 = TRAJ[0]
+						A1 = TRAJ[1]
+						V2 = TRAJ[2]
+						A2 = TRAJ[3]
+						V3 = TRAJ[4]
+						A3 = TRAJ[5]
+						V4 = TRAJ[6]
+						A4 = TRAJ[7]
+						V5 = TRAJ[8]
+						A5 = TRAJ[9]
+						V6 = TRAJ[10]
+						A6 = TRAJ[11]
+						# Set calculated profile to each servo
+						self.SetProfile1(V1,A1)
+						self.SetProfile2(V2,A2)
+						self.SetProfile3(V3,A3)
+						self.SetProfile4(V4,A4)
+						self.SetProfile5(V5,A5)
+						self.SetProfile6(V6,A6)
+						# Drive servo to goal position according to that velocity
+						self.RunServo(GoalPos1,GoalPos2,GoalPos3,GoalPos4,GoalPos5,GoalPos6)
+						print("Move to point %d" %K )
+						print("DelPos1: %d" %DelPos1)
+						print("DelPos2: %d" %DelPos2)
+						print("DelPos3: %d" %DelPos3)
+						print("DelPos4: %d" %DelPos4)
+						print("DelPos5: %d" %DelPos5)
+						print("DelPos6: %d" %DelPos6)
+						# Check which kind of motion does the servo moves
+						# It can be Step, Rectangle, Trapezoidal, Triangle
+						# We expect to let it shows a Trapezoidal profile, but any profile is fine.
+						MoveType1 = self.MovingStatus1()
+						MoveType2 = self.MovingStatus2()
+						MoveType3 = self.MovingStatus3()
+						MoveType4 = self.MovingStatus4()
+						MoveType5 = self.MovingStatus5()
+						MoveType6 = self.MovingStatus6()
+
+						MovingFlag = True
+						# This delay would make sure that the moving detection loop will not run too fast than actual motion
+						time.sleep(0.1)
+						Block1 = True
+						Block2 = True
+						Block3 = True
+						Block4 = True
+						Block5 = True
+						Block6 = True
+						# This loop will check that all of the servo is in goal position or not
+						# If it was, it would print how long does it takes to travel
+						# Normally, if all servo move with Trapezoidal profile, it will stop almost at the same time
+						# If it uses other profile, you can notice some lead / lag in few seconds.
+						while MovingFlag:
+							Move1 = self.IsMoving1()
+							Move2 = self.IsMoving2()
+							Move3 = self.IsMoving3()
+							Move4 = self.IsMoving4()
+							Move5 = self.IsMoving5()
+							Move6 = self.IsMoving6()
+
+							if Move1 == 0 and Block1 == True:
+								endTime1 = time.time()
+								period1 = endTime1 - startTime
+								Block1 = False
+							if Move2 == 0 and Block2 == True:
+								endTime2 = time.time()
+								period2 = endTime2 - startTime 
+								Block2 = False 
+							if Move3 == 0 and Block3 == True:
+								endTime3 = time.time()
+								period3 = endTime3 - startTime
+								Block3 = False
+							if Move4 == 0 and Block4 == True:
+								endTime4 = time.time()
+								period4 = endTime4 - startTime
+							 	Block4 = False
+							if Move5 == 0 and Block5 == True:
+								endTime5 = time.time()
+								period5 = endTime5 - startTime 
+								Block5 = False 
+							if Move6 == 0 and Block6 == True:
+								endTime6 = time.time()
+							 	period6 = endTime6 - startTime
+								Block6 = False
+
+
+
+							if Move1 == 0 and Move2 == 0 and Move3 == 0 and Move4 == 0 and Move5 == 0 and Move6 == 0:
+								MovingFlag = False
+								print("Period1: %f" %period1)
+								print("Period2: %f" %period2) 
+								print("Period3: %f" %period3)
+								print("Period4: %f" %period4)
+								print("Period5: %f" %period5) 
+								print("Period6: %f" %period6)
+								print("Finished point %d" %K)
+								print("--------------------------------------------------")
+								print("--------------------------------------------------")
+
+						# Update the current position
+						PreAng1 = GoalPos1
+						PreAng2 = GoalPos2
+						PreAng3 = GoalPos3
+						PreAng4 = GoalPos4
+						PreAng5 = GoalPos5
+						PreAng6 = GoalPos6
+						# When it's done with 6 points, it will reset to 0 and keep running from start again
+						if K == 5:
+							K = 0
+							self.StandByPos()
+
+		# To stop the robot, you just hit Ctrl+C then the robot will stop there
+		# Torque is still ON, so you can turn your power supply or switch off to release the torque
+		# BE CAREFUL, robot will fall down immediately after you turn off
+		except(KeyboardInterrupt, SystemExit):
+			print("End program...")
+
+	def HarmAvoiding(self):
+		PreCur = self.ReadAllCurrent()
+		PreCur1 = PreCur[0]
+		PreCur2 = PreCur[1]
+		PreCur3 = PreCur[2]
+		PreCur4 = PreCur[3]
+		PreCur5 = PreCur[4]
+		PreCur6 = PreCur[5]
+		OverLoad1 = abs(PreCur1) >= self.GoalCur1
+		OverLoad2 = abs(PreCur2) >= self.GoalCur2
+		OverLoad3 = abs(PreCur3) >= self.GoalCur3
+		OverLoad4 = abs(PreCur4) >= self.GoalCur4
+		OverLoad5 = abs(PreCur5) >= self.GoalCur5
+		OverLoad6 = abs(PreCur6) >= self.GoalCur6
+
+		if OverLoad1 or OverLoad2 or OverLoad3 or OverLoad4 or OverLoad5 or OverLoad6:
+			
+			# For stop the motion
+			ReadAng = self.ReadAngle()
+			self.RunServo(ReadAng[0],ReadAng[1],ReadAng[2],ReadAng[3],ReadAng[4],ReadAng[5])
+			#time.sleep(0.5)
+
+			# For make the overload servo turn itself back a bit, avoid squeezing to object
+			ShiftAng = 10
+			if OverLoad1:
+				self.RunServo1(ReadAng[0]-(ShiftAng*abs(PreCur1)/PreCur1))
+			elif OverLoad2:
+				self.RunServo2(ReadAng[1]-(ShiftAng*abs(PreCur2)/PreCur2))
+			elif OverLoad3:
+				self.RunServo3(ReadAng[2]-(ShiftAng*abs(PreCur3)/PreCur3))
+			elif OverLoad4:
+				self.RunServo4(ReadAng[3]-(ShiftAng*abs(PreCur4)/PreCur4))
+			elif OverLoad5:
+				self.RunServo5(ReadAng[4]-(ShiftAng*abs(PreCur5)/PreCur5))
+			elif OverLoad6:
+				self.RunServo6(ReadAng[5]-(ShiftAng*abs(PreCur6)/PreCur6))
+
+			# wait for start button, or can be replaced with delay timer
+			print "Press start to continue run again..."
+			waitForStart = True
+			while waitForStart:
+				Buttons = self.getButton()
+				Start_Btn = Buttons[7] #Start
+
+				if Start_Btn == 1:
+					waitForStart = False
+
+				time.sleep(0.1)					
