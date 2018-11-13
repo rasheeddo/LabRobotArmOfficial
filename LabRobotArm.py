@@ -2397,6 +2397,39 @@ class RobotArm:
 				if Move1 == 0 and Move2 == 0 and Move3 == 0 and Move4 == 0 and Move5 == 0 and Move6 == 0:
 					MovingFlag = False
 
+	def StandByJogLinear(self):
+
+		print("Robot arm is going to standby position in the Jog Linear Mode")
+
+		Vstd = 20
+		Astd = 8
+
+		self.SetProfile1(Vstd,Astd)
+		self.SetProfile2(Vstd,Astd)
+		self.SetProfile3(Vstd,Astd)
+		self.SetProfile4(Vstd,Astd)
+		self.SetProfile5(Vstd,Astd)
+		self.SetProfile6(Vstd,Astd)
+
+		ServoAng = self.RobotArmINV(0,300,200,0,0,0)
+
+		self.RunServo(ServoAng[0],ServoAng[1],ServoAng[2],ServoAng[3],ServoAng[4],ServoAng[5])
+
+		MovingFlag = True
+		# This delay would make sure that the moving detection loop will not run too fast than actual motion
+		time.sleep(0.1) 
+
+		while MovingFlag:
+			Move1 = self.IsMoving1()
+			Move2 = self.IsMoving2()
+			Move3 = self.IsMoving3()
+			Move4 = self.IsMoving4()
+			Move5 = self.IsMoving5()
+			Move6 = self.IsMoving6()
+
+			if Move1 == 0 and Move2 == 0 and Move3 == 0 and Move4 == 0 and Move5 == 0 and Move6 == 0:
+				MovingFlag = False
+
 	def RobotArmGoHome(self):
 
 		HomeDataLength = len(self.Home_Ang1)
@@ -3367,6 +3400,7 @@ class RobotArm:
 		self.StandByPos()
 		time.sleep(0.5)
 		print("On the stand by position")
+		self.StandByJogLinear()
 
 		print("--------------------------------------------------------------------")
 		print("--------------------------------------------------------------------")
@@ -3405,7 +3439,7 @@ class RobotArm:
 
 			if Continue_Btn == True:
 				# Bring robot back to stand by position
-				self.StandByPos()
+				self.StandByJogLinear()
 				Vstd = Vfix
 				Astd = Afix
 				self.SetProfile1(Vstd,Astd)
@@ -3494,7 +3528,7 @@ class RobotArm:
 					self.RunServo(DriveAng[0],DriveAng[1],DriveAng[2],DriveAng[3],DriveAng[4],DriveAng[5])
 				else:
 					print("Robot is out of workspace in horizontal constraint limit!")
-					self.StandByPos()
+					self.StandByJogLinear()
 					# Set velocity back
 					Vstd = Vfix
 					Astd = Afix
@@ -3561,7 +3595,7 @@ class RobotArm:
 						self.RunServo(DriveAng[0],DriveAng[1],DriveAng[2],DriveAng[3],DriveAng[4],DriveAng[5])
 					else:
 						print("Robot is out of workspace in horizontal constraint limit!")
-						self.StandByPos()
+						self.StandByJogLinear()
 						Vstd = Vfix
 						Astd = Afix
 						self.SetProfile1(Vstd,Astd)
@@ -3627,7 +3661,7 @@ class RobotArm:
 						self.RunServo(DriveAng[0],DriveAng[1],DriveAng[2],DriveAng[3],DriveAng[4],DriveAng[5])
 					else:
 						print("Robot is out of workspace in horizontal constraint limit!")
-						self.StandByPos()
+						self.StandByJogLinear()
 						Vstd = Vfix
 						Astd = Afix
 						self.SetProfile1(Vstd,Astd)
@@ -3690,7 +3724,7 @@ class RobotArm:
 						self.RunServo(DriveAng[0],DriveAng[1],DriveAng[2],DriveAng[3],DriveAng[4],DriveAng[5])
 					else:
 						print("Robot is out of workspace in horizontal constraint limit!")
-						self.StandByPos()
+						self.StandByJogLinear()
 						Vstd = Vfix
 						Astd = Afix
 						self.SetProfile1(Vstd,Astd)
@@ -3754,7 +3788,7 @@ class RobotArm:
 						self.RunServo(DriveAng[0],DriveAng[1],DriveAng[2],DriveAng[3],DriveAng[4],DriveAng[5])
 					else:
 						print("Robot is out of workspace in horizontal constraint limit!")
-						self.StandByPos()
+						self.StandByJogLinear()
 						Vstd = Vfix
 						Astd = Afix
 						self.SetProfile1(Vstd,Astd)
@@ -3817,7 +3851,7 @@ class RobotArm:
 						self.RunServo(DriveAng[0],DriveAng[1],DriveAng[2],DriveAng[3],DriveAng[4],DriveAng[5])
 					else:
 						print("Robot is out of workspace in horizontal constraint limit!")
-						self.StandByPos()
+						self.StandByJogLinear()
 						Vstd = Vfix
 						Astd = Afix
 						self.SetProfile1(Vstd,Astd)
